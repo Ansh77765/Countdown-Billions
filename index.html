@@ -425,9 +425,9 @@
 <audio id="bgMusic" src="https://cdnjs.cloudflare.com/ajax/libs/soundmanager2/2.97a.20150601/demo/mpc/audio/CHINA_1.mp3" loop></audio>
 
 <script>
-  // Calculate launch time: current time + 1 hour 55 minutes
-  const now = new Date();
-  const launchDate = new Date(now.getTime() + (1 * 60 * 60 * 1000) + (55 * 60 * 1000));
+  // Mint starts: October 6, 2025 at 6:30 PM IST (GMT+5:30)
+  // Converting to UTC: 6:30 PM IST = 1:00 PM UTC (13:00)
+  const launchDate = new Date('2025-10-06T18:30:00+05:30');
   const openseaURL = "https://opensea.io/collection/billions-supermasks";
 
   const countdown = setInterval(() => {
