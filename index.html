@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billions Supermasks Launch</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0e27;
+    color: #fff;
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  .gradient-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 50%, #ff4081 100%);
+    background-size: 400% 400%;
+    animation: gradientFlow 20s ease infinite;
+    z-index: 0;
+  }
+
+  @keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, transparent 0%, rgba(10,14,39,0.5) 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  canvas#particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 3;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 60px;
+    animation: fadeInDown 1s ease-out;
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: #fff;
+    text-shadow: 0 0 40px rgba(255,255,255,0.5), 0 0 80px rgba(255,255,255,0.3);
+    letter-spacing: -1px;
+    animation: glow 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3); }
+    to { text-shadow: 0 0 40px rgba(255,255,255,0.8), 0 0 80px rgba(255,255,255,0.5); }
+  }
+
+  #countdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    animation: fadeInUp 1s ease-out 0.3s both;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .time-block {
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 25px 15px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .time-block::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+  }
+
+  .time-block:hover {
+    transform: translateY(-10px) scale(1.05);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .time-block:hover::before {
+    transform: rotate(45deg) translate(50%, 50%);
+  }
+
+  .number {
+    font-weight: 800;
+    font-size: 3rem;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+    line-height: 1;
+  }
+
+  .label {
+    font-size: 0.85rem;
+    color: #e0e0e0;
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  .redirect-notice {
+    text-align: center;
+    font-size: 1rem;
+    color: #e0e0e0;
+    margin-bottom: 50px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+
+  .content-grid {
+    display: grid;
+    gap: 30px;
+    animation: fadeInUp 1s ease-out 0.6s both;
+  }
+
+  .section {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 35px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6a11cb, #2575fc, #ff4081);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .section:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.2);
+  }
+
+  .section:hover::before {
+    opacity: 1;
+  }
+
+  .section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 20px;
+    color: #fff;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section h2::before {
+    content: '';
+    width: 6px;
+    height: 30px;
+    background: linear-gradient(180deg, #6a11cb, #2575fc);
+    border-radius: 3px;
+  }
+
+  .section ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .section ul li {
+    padding: 12px 0;
+    color: #f0f0f0;
+    line-height: 1.7;
+    display: flex;
+    align-items: start;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .section ul li:last-child {
+    border-bottom: none;
+  }
+
+  .section ul li:hover {
+    padding-left: 10px;
+    color: #fff;
+  }
+
+  .section ul li::before {
+    content: "◆";
+    color: #ffdd57;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .section p {
+    font-size: 1.05rem;
+    color: #e8e8e8;
+    line-height: 1.8;
+    margin-bottom: 15px;
+  }
+
+  .section p:last-child {
+    margin-bottom: 0;
+  }
+
+  strong {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  a {
+    color: #ffdd57;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #ffdd57;
+    transition: width 0.3s ease;
+  }
+
+  a:hover {
+    color: #ffe680;
+  }
+
+  a:hover::after {
+    width: 100%;
+  }
+
+  .mini-supermask {
+    position: fixed;
+    z-index: 2;
+    will-change: transform;
+    animation: floatRandom 6s infinite ease-in-out;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  @keyframes floatRandom {
+    0% { transform: translate(0,0) rotate(0deg) scale(1); }
+    25% { transform: translate(20px,-15px) rotate(15deg) scale(1.1); }
+    50% { transform: translate(-15px,-25px) rotate(-15deg) scale(0.9); }
+    75% { transform: translate(15px,15px) rotate(10deg) scale(1.15); }
+    100% { transform: translate(0,0) rotate(0deg) scale(1); }
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 30px 15px;
+    }
+
+    .section {
+      padding: 25px 20px;
+    }
+
+    .number {
+      font-size: 2.5rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="gradient-bg"></div>
+<div class="overlay"></div>
+
+<canvas id="particleCanvas"></canvas>
+
+<div class="container">
+  <div class="header">
+    <h1>✨ Billions Supermasks Minting Soon! ✨</h1>
+  </div>
+
+  <div id="countdown">
+    <div class="time-block">
+      <div class="number" id="days">00</div>
+      <div class="label">Days</div>
+    </div>
+    <div class="time-block">
+      <div class="number" id="hours">00</div>
+      <div class="label">Hours</div>
+    </div>
+    <div class="time-block">
+      <div class="number" id="minutes">00</div>
+      <div class="label">Minutes</div>
+    </div>
+    <div class="time-block">
+      <div class="number" id="seconds">00</div>
+      <div class="label">Seconds</div>
+    </div>
+  </div>
+
+  <p class="redirect-notice">You'll be redirected to OpenSea when the mint starts.</p>
+
+  <div class="content-grid">
+    <div class="section">
+      <h2>Mint Snapshot</h2>
+      <ul>
+        <li><strong>Name:</strong> Billions Supermasks</li>
+        <li><strong>Description:</strong> Supermasks NFT collection designed by Billions Network</li>
+        <li><strong>Utility:</strong> Multiplier for Billions leaderboard on Kaito + Discord role + Future rewards</li>
+        <li><strong>Total Supply:</strong> 8888</li>
+        <li><strong>Mint Price:</strong> $75 (Discounted: $50)</li>
+        <li><strong>Blockchain:</strong> Polygon</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Mint Phases</h2>
+      <ul>
+        <li><strong>Phase 1 (Free / GTD):</strong> Earn via community activities, Genesis burn, creators, yappers, team allocation & cross-community collabs</li>
+        <li><strong>Phase 2 (Discount / GTD):</strong> Guaranteed discounted mint for community, Genesis holders, NFT collabs & creators</li>
+        <li><strong>Phase 3 (Paid / GTD):</strong> Mint at fixed price, guaranteed for NFT collabs</li>
+        <li><strong>Phase 4 (Paid / FCFS):</strong> Mint at fixed price, overallocated spots, first-come-first-serve</li>
+        <li><strong>Phase 5 (Public):</strong> Remaining spots, first-come-first-serve</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>About Supermasks</h2>
+      <p>Each Supermask represents a unique human. In a world where bots, deepfakes, and AI clones blur reality, your Supermask is your new identity superpower.</p>
+      <p>If you believe the next web3 evolution will be powered by billions of humans and AI agents, Billions Supermasks NFT is your chance to unlock new superpowers, growth, and a stronger digital identity.</p>
+      <p>Mint your NFT and help write the next chapter of a network built to scale communities to billions of humans. Thanks to <a href="https://polygon.technology/" target="_blank">@0xPolygon</a> 🫶</p>
+    </div>
+  </div>
+</div>
+
+<audio id="bgMusic" src="https://cdnjs.cloudflare.com/ajax/libs/soundmanager2/2.97a.20150601/demo/mpc/audio/CHINA_1.mp3" loop></audio>
+
+<script>
+  // Calculate launch time: current time + 1 hour 55 minutes
+  const now = new Date();
+  const launchDate = new Date(now.getTime() + (1 * 60 * 60 * 1000) + (55 * 60 * 1000));
+  const openseaURL = "https://opensea.io/collection/billions-supermasks";
+
+  const countdown = setInterval(() => {
+    const currentTime = new Date().getTime();
+    const distance = launchDate - currentTime;
+
+    if (distance <= 0) {
+      clearInterval(countdown);
+      window.location.href = openseaURL;
+    } else {
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("days").textContent = String(days).padStart(2,"0");
+      document.getElementById("hours").textContent = String(hours).padStart(2,"0");
+      document.getElementById("minutes").textContent = String(minutes).padStart(2,"0");
+      document.getElementById("seconds").textContent = String(seconds).padStart(2,"0");
+    }
+  }, 1000);
+
+  document.body.addEventListener('click', () => {
+    const music = document.getElementById('bgMusic');
+    if (music.paused) music.play();
+  }, { once: true });
+
+  // Floating mini Supermasks - positioned around edges
+  const images = ['supermask1.png','supermask2.png','supermask3.png'];
+  const numberOfMasks = 20;
+  
+  for(let i=0; i<numberOfMasks; i++){
+    const img = document.createElement('img');
+    img.src = images[Math.floor(Math.random()*images.length)];
+    img.className = 'mini-supermask';
+    
+    // Position masks around edges (left, right, top corners)
+    const side = Math.floor(Math.random() * 4);
+    if (side === 0) { // Left side
+      img.style.left = Math.random()*15+'%';
+      img.style.top = Math.random()*100+'%';
+    } else if (side === 1) { // Right side
+      img.style.left = 85+Math.random()*15+'%';
+      img.style.top = Math.random()*100+'%';
+    } else if (side === 2) { // Top left
+      img.style.left = Math.random()*30+'%';
+      img.style.top = Math.random()*20+'%';
+    } else { // Top right
+      img.style.left = 70+Math.random()*30+'%';
+      img.style.top = Math.random()*20+'%';
+    }
+    
+    img.style.width = 40+Math.random()*70+'px';
+    img.style.animationDuration = 5+Math.random()*4+'s';
+    img.style.animationDelay = Math.random()*3+'s';
+    document.body.appendChild(img);
+  }
+
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+
+  const particles = [];
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 2 + 0.5,
+      speedX: (Math.random() - 0.5) * 0.6,
+      speedY: (Math.random() - 0.5) * 0.6,
+      alpha: Math.random() * 0.5 + 0.3
+    });
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    particles.forEach((p, i) => {
+      p.x += p.speedX;
+      p.y += p.speedY;
+      
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+      ctx.fill();
+
+      particles.forEach((p2, j) => {
+        if (i !== j) {
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 120) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 * (1 - distance / 120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      });
+    });
+    
+    requestAnimationFrame(animateParticles);
+  }
+  
+  animateParticles();
+</script>
+</body>
+</html>
